@@ -3,22 +3,10 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { ChevronDown, Heart, Menu, Plane, X } from 'lucide-react';
 import Container from '@/components/common/Container';
 import ServiceIcon from '@/components/common/ServiceIcon';
-import { NAV_LINKS } from '@/constants';
+import { APP_NAME, APP_TAGLINE, LOGO_SRC, NAV_LINKS } from '@/constants';
 import { servicesData } from '@/data/services';
 import { useAppSelector } from '@/app/hooks';
 import { selectWishlistIds } from '@/features/wishlist/wishlistSlice';
-
-// Logo file: public/logo.png (svg / webp ho to naam yahin badal do)
-const LOGO_SRC = '/logo.jpeg';
-
-// Navbar me naam seedha yahin se aayega (constants file par depend nahi)
-const BRAND_NAME = 'Sovanshi Travels';
-
-// Naam ke neeche chhoti line. Nahi chahiye to '' kar do
-const BRAND_TAGLINE = 'Trusted Travel Partner';
-
-// Agar logo me already company ka naam likha hai to false kar do
-const SHOW_NAME_NEXT_TO_LOGO = true;
 
 const linkClass = ({ isActive }) =>
   `text-sm font-medium transition hover:text-brand-600 ${isActive ? 'text-brand-600' : 'text-slate-700'}`;
@@ -28,7 +16,7 @@ function Logo() {
   const [failed, setFailed] = useState(false);
 
   return (
-    <Link to="/" className="group flex items-center gap-3" aria-label={BRAND_NAME}>
+    <Link to="/" className="group flex items-center gap-3" aria-label={APP_NAME}>
       {failed ? (
         <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-brand-600 text-white">
           <Plane className="h-5 w-5" />
@@ -36,24 +24,22 @@ function Logo() {
       ) : (
         <img
           src={LOGO_SRC}
-          alt={`${BRAND_NAME} logo`}
+          alt={`${APP_NAME} logo`}
           onError={() => setFailed(true)}
           className="h-14 w-14 rounded-xl object-cover shadow-md ring-1 ring-slate-900/10 transition group-hover:shadow-lg"
         />
       )}
 
-      {(SHOW_NAME_NEXT_TO_LOGO || failed) && (
-        <span className="flex flex-col leading-none">
-          <span className="font-display text-[1.35rem] font-bold tracking-tight text-slate-900 sm:text-2xl">
-            {BRAND_NAME}
-          </span>
-          {BRAND_TAGLINE && (
-            <span className="mt-1.5 hidden text-[10px] font-semibold uppercase tracking-[0.28em] text-amber-600 sm:block">
-              {BRAND_TAGLINE}
-            </span>
-          )}
+      <span className="flex flex-col leading-none">
+        <span className="font-display text-[1.35rem] font-bold tracking-tight text-slate-900 sm:text-2xl">
+          {APP_NAME}
         </span>
-      )}
+        {APP_TAGLINE && (
+          <span className="mt-1.5 hidden text-[10px] font-semibold uppercase tracking-[0.28em] text-amber-600 sm:block">
+            {APP_TAGLINE}
+          </span>
+        )}
+      </span>
     </Link>
   );
 }

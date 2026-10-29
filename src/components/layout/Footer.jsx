@@ -4,23 +4,14 @@ import { Mail, MapPin, Phone, Plane } from 'lucide-react';
 import WhatsAppIcon from '@/components/common/WhatsAppIcon';
 import { GENERAL_MESSAGE, waLink } from '@/utils/whatsapp';
 import Container from '@/components/common/Container';
-import { CONTACT_INFO, NAV_LINKS } from '@/constants';
-
-// Navbar wale same settings rakhna
-const LOGO_SRC = '/logo.png';
-const BRAND_NAME = 'Sovanshi Travels';
-const BRAND_TAGLINE = 'Trusted Travel Partner'; // nahi chahiye to '' kar do
-
-// Website banane wali company ka credit (footer ke sabse neeche)
-const DEV_NAME = 'Fidelsya Technologies Pvt. Ltd.';
-const DEV_URL = 'https://www.fidelsya.com/';
+import { APP_NAME, APP_TAGLINE, CONTACT_INFO, DEVELOPER, LOGO_SRC, NAV_LINKS } from '@/constants';
 
 // Footer ka logo + naam (click karne par Home page khulega)
 function FooterLogo() {
   const [failed, setFailed] = useState(false);
 
   return (
-    <Link to="/" className="inline-flex items-center gap-3" aria-label={`${BRAND_NAME} home`}>
+    <Link to="/" className="inline-flex items-center gap-3" aria-label={`${APP_NAME} home`}>
       {failed ? (
         <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-white">
           <Plane className="h-6 w-6" />
@@ -28,16 +19,16 @@ function FooterLogo() {
       ) : (
         <img
           src={LOGO_SRC}
-          alt={`${BRAND_NAME} logo`}
+          alt={`${APP_NAME} logo`}
           onError={() => setFailed(true)}
           className="h-12 w-12 rounded-xl object-cover shadow-lg ring-1 ring-white/20"
         />
       )}
       <span className="flex flex-col leading-none">
-        <span className="font-display text-2xl font-bold tracking-tight text-white">{BRAND_NAME}</span>
-        {BRAND_TAGLINE && (
+        <span className="font-display text-2xl font-bold tracking-tight text-white">{APP_NAME}</span>
+        {APP_TAGLINE && (
           <span className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#fbbf24]">
-            {BRAND_TAGLINE}
+            {APP_TAGLINE}
           </span>
         )}
       </span>
@@ -111,17 +102,17 @@ export default function Footer() {
       <div className="border-t border-slate-800 py-5 text-xs text-slate-500">
         <Container className="flex flex-col items-center gap-2 text-center">
           <p>
-            &copy; {new Date().getFullYear()} {BRAND_NAME}. All rights reserved.
+            &copy; {new Date().getFullYear()} {APP_NAME}. All rights reserved.
           </p>
           <p>
             Designed &amp; developed by{' '}
             <a
-              href={DEV_URL}
+              href={DEVELOPER.url}
               target="_blank"
               rel="noopener noreferrer"
               className="font-semibold text-[#fbbf24] transition hover:text-[#fcd34d] hover:underline"
             >
-              {DEV_NAME}
+              {DEVELOPER.name}
             </a>
           </p>
         </Container>

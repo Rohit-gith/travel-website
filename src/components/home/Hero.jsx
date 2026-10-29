@@ -18,7 +18,7 @@ import Container from '@/components/common/Container';
 import CarImage from '@/components/fleet/CarImage';
 import WhatsAppIcon from '@/components/common/WhatsAppIcon';
 import { categories } from '@/data/tours';
-import { CONTACT_INFO, HERO_IMAGE } from '@/constants';
+import { CONTACT_INFO, HERO_IMAGES } from '@/constants';
 import { formatCarRate } from '@/utils/format';
 import { carMessage, GENERAL_MESSAGE, waLink } from '@/utils/whatsapp';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
@@ -26,7 +26,9 @@ import { selectAllCars } from '@/features/fleet/fleetSlice';
 import { setCategory, setMaxPrice, setSearch } from '@/features/tours/toursSlice';
 
 // How long each car stays on screen before the hero swaps to the next one
-const ROTATE_MS = 5500;
+const ROTATE_MS = 4200;
+// Photo slide hone me kitna time lage (ms). Zyada = aur dheema aur smooth
+const SLIDE_MS = 1600;
 
 const budgets = [
   { label: 'Any budget', value: 100000 },
@@ -66,11 +68,27 @@ export default function Hero() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const activeCar = cars[index];
 
+  // Background photos: jo photo load na ho (broken link) use loop se hata dete hain
+  const [brokenBg, setBrokenBg] = useState([]);
+  const bgSlides = HERO_IMAGES.filter((h) => !brokenBg.includes(h.image));
+  const bgIndex = bgSlides.length ? index % bgSlides.length : 0;
+  const [bgPair, setBgPair] = useState({ cur: bgIndex, prev: -1 });
+  if (bgPair.cur !== bgIndex) setBgPair({ cur: bgIndex, prev: bgPair.cur });
+
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
   useEffect(() => {
     setReducedMotion(window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  }, []);
+
+  // Saari background photos pehle se load kar lo, taaki fade ke time khali na dikhe
+  useEffect(() => {
+    HERO_IMAGES.forEach((h) => {
+      const img = new Image();
+      img.src = h.image;
+      img.decode?.().catch(() => {});
+    });
   }, []);
 
   // Auto-swap to the next car. Restarts whenever the car changes (also on manual click),
@@ -101,26 +119,42 @@ export default function Hero() {
   return (
     <section className="relative">
       {/* ================= Full-bleed photo hero ================= */}
-      <div className="relative isolate flex min-h-[680px] items-center overflow-hidden pb-24 pt-16 lg:min-h-[740px] lg:pb-32 lg:pt-20">
-        {/* Background photo. If a car has its own `heroImage` (src/data/cars.js) the background swaps with the car. */}
-        {cars.map((c, i) => (
-          <img
-            key={c.id}
-            src={c.heroImage || HERO_IMAGE.image}
-            alt={i === 0 ? 'A car on a scenic road' : ''}
-            style={{ objectPosition: HERO_IMAGE.position }}
-            className={`absolute inset-0 -z-20 h-full w-full object-cover transition-opacity duration-1000 ${
-              i === index ? 'opacity-100' : 'opacity-0'
-            }`}
-          />
-        ))}
+      <div className="relative isolate flex min-h-[520px] items-center overflow-hidden pb-24 pt-12 md:min-h-[680px] md:pt-16 lg:min-h-[740px] lg:pb-32 lg:pt-20">
+        {/* Background photos: naya photo right se slide hoke aata hai, purana left me chala jata hai.
+            Koi zoom ya fade nahi, bas smooth swipe */}
+        {bgSlides.map((h, i) => {
+          const isActive = i === bgIndex;
+          const isPrev = i === bgPair.prev && !isActive;
+          const x = isActive ? 0 : isPrev ? -35 : 100; // purana photo dheere (35%) jata hai, naya upar se aata hai: parallax jaisa smooth look // baaki photos right side me ready khadi rehti hain
+          const animate = (isActive || isPrev) && !reducedMotion;
+          return (
+            <img
+              key={h.image}
+              src={h.image}
+              alt=""
+              aria-hidden="true"
+              onError={() => setBrokenBg((b) => [...b, h.image])}
+              decoding="async"
+              className="absolute inset-0 h-full w-full object-cover will-change-transform"
+              style={{
+                objectPosition: h.position,
+                zIndex: isActive ? -19 : -20,
+                backfaceVisibility: 'hidden',
+                transform: `translate3d(${x}%, 0, 0)`,
+                transition: animate ? `transform ${SLIDE_MS}ms cubic-bezier(0.22, 1, 0.36, 1)` : 'none',
+              }}
+            />
+          );
+        })}
+        {/* Saari photos fail ho jayein to bhi hero khali na dikhe */}
+        <div className="absolute inset-0 -z-30 bg-gradient-to-br from-brand-900 to-slate-950" />
         {/* Overlays keep the text readable while the photo stays visible */}
-        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-slate-950/90 via-slate-950/60 to-slate-950/20 lg:via-slate-950/50 lg:to-slate-950/5" />
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-950/35 via-slate-950/10 to-slate-950/45 md:bg-gradient-to-r md:from-slate-950/90 md:via-slate-950/60 md:to-slate-950/20 lg:via-slate-950/50 lg:to-slate-950/5" />
         <div className="absolute inset-x-0 bottom-0 -z-10 h-48 bg-gradient-to-t from-slate-950/70 to-transparent" />
 
         <Container className="relative">
           <div className="max-w-2xl">
-            <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/55 px-4 py-1.5 text-sm font-semibold text-white ring-1 ring-white/30 backdrop-blur">
+            <span className="inline-flex items-center gap-2 rounded-full bg-slate-950/65 px-4 py-1.5 text-sm font-semibold text-white ring-1 ring-white/30">
               <span className="h-2 w-2 animate-blink rounded-full bg-[#fbbf24]" />
               Premium tours &amp; private cab service
             </span>
@@ -166,7 +200,7 @@ export default function Hero() {
 
               <a
                 href={`tel:${CONTACT_INFO.phone.replace(/\s/g, '')}`}
-                className="inline-flex items-center gap-2 rounded-xl bg-slate-950/55 px-6 py-3.5 font-semibold text-white ring-1 ring-white/35 backdrop-blur transition hover:bg-white/20"
+                className="inline-flex items-center gap-2 rounded-xl bg-slate-950/65 px-6 py-3.5 font-semibold text-white ring-1 ring-white/35 transition hover:bg-white/20"
               >
                 <Phone className="h-4 w-4" /> {CONTACT_INFO.phone}
               </a>
@@ -190,7 +224,7 @@ export default function Hero() {
                     className={`rounded-full px-5 py-2 text-sm font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#fcd34d] ${
                       i === index
                         ? 'bg-white text-slate-900 shadow-lg ring-2 ring-[#fbbf24]'
-                        : 'bg-slate-950/55 text-white ring-1 ring-white/40 backdrop-blur hover:bg-white/20'
+                        : 'bg-slate-950/65 text-white ring-1 ring-white/40 hover:bg-white/20'
                     }`}
                   >
                     {c.shortName}
@@ -203,7 +237,7 @@ export default function Hero() {
           {/* Search bar */}
           <form
             onSubmit={handleSubmit}
-            className="mt-10 grid max-w-4xl gap-2 rounded-2xl bg-white/95 p-2 shadow-2xl backdrop-blur md:grid-cols-[1fr_1fr_1fr_auto] md:items-center"
+            className="mt-10 grid max-w-4xl gap-2 rounded-2xl bg-white p-2 shadow-2xl md:grid-cols-[1fr_1fr_1fr_auto] md:items-center"
           >
             <Field icon={MapPin} label="Destination">
               <input
@@ -254,7 +288,7 @@ export default function Hero() {
 
           {/* Car card: sits under the search bar on small screens, floats on the right on large screens */}
           <div
-            className="mt-8 w-full max-w-sm overflow-hidden rounded-2xl bg-slate-950/55 text-white shadow-xl ring-1 ring-white/25 backdrop-blur-md xl:absolute xl:right-0 xl:top-0 xl:mt-0 xl:w-80"
+            className="mt-8 hidden w-full max-w-sm overflow-hidden rounded-2xl md:block bg-slate-950/65 text-white shadow-xl ring-1 ring-white/25 xl:absolute xl:right-0 xl:top-0 xl:mt-0 xl:w-80"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             onFocus={() => setPaused(true)}

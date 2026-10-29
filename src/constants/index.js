@@ -1,9 +1,32 @@
-export const APP_NAME = import.meta.env.VITE_APP_NAME || 'Wanderly';
+// Brand (Navbar, Footer, About, page title sab yahin se naam lete hain)
+export const APP_NAME = 'Sovanshi Travels';
+export const APP_TAGLINE = 'Trusted Travel Partner'; // nahi chahiye to '' kar do
+export const LOGO_SRC = '/logo.jpeg'; // file: public/logo.jpeg
 
-export const HERO_IMAGE = {
-  image: 'https://images.unsplash.com/photo-1735896951413-cb764374f75a?auto=format&fit=crop&w=2400&q=80',
-  position: 'center',
-};
+// Website banane wali company ka credit (Footer ke sabse neeche)
+export const DEVELOPER = { name: 'Fidelsya Technologies Pvt. Ltd.', url: 'https://www.fidelsya.com/' };
+
+// Hero ka background photo loop. Ye saari photos smoothly ek ke baad ek badalti hain.
+// Nayi photo add karne ke liye bas ek aur { image, position } line jod do.
+export const HERO_IMAGES = [
+   {
+    image: 'https://images.unsplash.com/photo-1735896951413-cb764374f75a?auto=format&fit=crop&w=1800&q=75',
+    position: 'center',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=1800&q=75',
+    position: 'center',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1800&q=75',
+    position: 'center',
+  },
+  {
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=75',
+    position: 'center',
+  }
+ 
+];
 
 export const NAV_LINKS = [
   { label: 'Home', to: '/' },

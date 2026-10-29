@@ -2,6 +2,7 @@ import Container from '@/components/common/Container';
 import PageHeader from '@/components/common/PageHeader';
 import SectionHeading from '@/components/common/SectionHeading';
 import CallToAction from '@/components/home/CallToAction';
+import { APP_NAME } from '@/constants';
 
 const stats = [
   { value: '10K+', label: 'Happy travellers' },
@@ -19,7 +20,7 @@ export default function About() {
           align="left"
           eyebrow="Our story"
           title="Travel with people who love travel"
-          subtitle="Wanderly started with a simple idea: planning a trip should be as enjoyable as taking it. Our team of local experts designs every itinerary with care, so you get authentic experiences without the stress."
+          subtitle={`${APP_NAME} started with a simple idea: planning a trip should be as enjoyable as taking it. Our team of local experts designs every itinerary with care, so you get authentic experiences without the stress.`}
         />
         <div className="mt-12 grid grid-cols-2 gap-6 md:grid-cols-4">
           {stats.map((s) => (

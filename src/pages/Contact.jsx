@@ -37,17 +37,29 @@ export default function Contact() {
       <Container className="grid gap-10 py-16 md:grid-cols-2">
         <div className="space-y-6">
           {[
-            { Icon: MapPin, label: 'Address', value: CONTACT_INFO.address },
-            { Icon: Phone, label: 'Phone', value: CONTACT_INFO.phone },
-            { Icon: Mail, label: 'Email', value: CONTACT_INFO.email },
-          ].map(({ Icon, label, value }) => (
+            {
+              Icon: MapPin,
+              label: 'Address',
+              value: CONTACT_INFO.address,
+              href: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(CONTACT_INFO.address)}`,
+              external: true,
+            },
+            { Icon: Phone, label: 'Phone', value: CONTACT_INFO.phone, href: `tel:${CONTACT_INFO.phone.replace(/\s/g, '')}` },
+            { Icon: Mail, label: 'Email', value: CONTACT_INFO.email, href: `mailto:${CONTACT_INFO.email}` },
+          ].map(({ Icon, label, value, href, external }) => (
             <div key={label} className="flex items-start gap-4">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600">
                 <Icon className="h-6 w-6" />
               </span>
               <div>
                 <p className="font-semibold text-slate-900">{label}</p>
-                <p className="text-slate-600">{value}</p>
+                <a
+                  href={href}
+                  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
+                  className="break-all text-slate-600 transition hover:text-brand-700"
+                >
+                  {value}
+                </a>
               </div>
             </div>
           ))}
