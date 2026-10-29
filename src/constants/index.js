@@ -38,20 +38,20 @@ export const NAV_LINKS = [
 ];
 
 export const CONTACT_INFO = {
-  email: 'rohitprasadsahoo@gmail.com',
-  phone: '+91 6372569846',
+  email: 'xyz@gmail.com',
+  phone: '+91 8260127233',
   address: 'Park Street, Kolkata, West Bengal, India',
 };
 
 // WhatsApp number in international format, digits only (country code + number, no "+" or spaces).
 // Every "Book now" / "Chat on WhatsApp" button on the site opens a chat with this number.
-export const WHATSAPP_NUMBER = '916372569846';
+export const WHATSAPP_NUMBER = '918260127233';
 
 // Owner details shown in the "Meet the owner" card (Services + About pages).
 // Put the owner's photo at public/images/owner.jpg (square or portrait, min 600x600).
 // If the file is missing, a neat monogram is shown instead.
 export const OWNER = {
-  name: 'Rohit Prasad Sahoo',
+  name: 'Srikanta Barik',
   role: 'Founder & Lead Travel Expert',
   photo: '/images/owner.webp',
   bio: 'Every trip we run is personally planned and monitored by our founder - from choosing the right car and a verified driver to being one call away while you travel. Your comfort and safety are not a promise on a brochure, they are how we do business.',
