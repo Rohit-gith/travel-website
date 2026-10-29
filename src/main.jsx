@@ -5,6 +5,9 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { store } from '@/app/store';
 import './index.css';
+import { initTranslate } from '@/utils/translate';
+
+initTranslate();
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>

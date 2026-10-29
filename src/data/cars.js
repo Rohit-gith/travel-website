@@ -11,7 +11,7 @@ export const carsData = [
     ac: true,
     pricePerKm: [12, 13], // per km: number (13) or range [min, max]
     popular: true,
-    image: '/images/cars/innova.jpg',
+    image: '/images/cars/innova.webp',
     description: 'The most trusted choice for long family trips and hill roads, with plush seats and plenty of space.',
   },
   {
@@ -26,7 +26,7 @@ export const carsData = [
     ac: true,
     pricePerKm: [12, 13], // per km: number (13) or range [min, max]
     popular: true,
-    image: '/images/cars/ertiga.jpg',
+    image: '/images/cars/ertiga.webp',
     description: 'Comfortable and economical for families and small groups on city and outstation trips.',
   },
   {
@@ -41,7 +41,7 @@ export const carsData = [
     ac: true,
     pricePerKm: [12, 13], // per km: number (13) or range [min, max]
     popular: true,
-    image: '/images/cars/dzire.jpg',
+    image: '/images/cars/dzire.webp',
     description: 'Smart, efficient sedan for airport transfers, couples and business travel.',
   },
   {
@@ -56,7 +56,7 @@ export const carsData = [
     ac: true,
     pricePerKm: [12, 13], // per km: number (13) or range [min, max]
     popular: false,
-    image: '/images/cars/exter.jpg',
+    image: '/images/cars/exter.webp',
     description: 'A modern compact SUV with a high seating position, ideal for city and weekend getaways.',
   },
   {
@@ -71,7 +71,7 @@ export const carsData = [
     ac: true,
     pricePerKm: [12, 13], // per km: number (13) or range [min, max]
     popular: false,
-    image: '/images/cars/bolero.jpg',
+    image: '/images/cars/bolero.webp',
     description: 'Tough and dependable for rural roads, hill routes and rough terrain.',
   },
 ];

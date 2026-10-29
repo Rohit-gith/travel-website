@@ -1,7 +1,7 @@
 // Brand (Navbar, Footer, About, page title sab yahin se naam lete hain)
 export const APP_NAME = 'Sovanshi Travels';
 export const APP_TAGLINE = 'Trusted Travel Partner'; // nahi chahiye to '' kar do
-export const LOGO_SRC = '/logo.jpeg'; // file: public/logo.jpeg
+export const LOGO_SRC = '/logo.webp'; // file: public/logo.webp
 
 // Website banane wali company ka credit (Footer ke sabse neeche)
 export const DEVELOPER = { name: 'Fidelsya Technologies Pvt. Ltd.', url: 'https://www.fidelsya.com/' };
@@ -24,7 +24,7 @@ export const HERO_IMAGES = [
   {
     image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1800&q=75',
     position: 'center',
-  }
+  },
  
 ];
 
@@ -53,7 +53,7 @@ export const WHATSAPP_NUMBER = '916372569846';
 export const OWNER = {
   name: 'Rohit Prasad Sahoo',
   role: 'Founder & Lead Travel Expert',
-  photo: '/images/owner.jpeg',
+  photo: '/images/owner.webp',
   bio: 'Every trip we run is personally planned and monitored by our founder - from choosing the right car and a verified driver to being one call away while you travel. Your comfort and safety are not a promise on a brochure, they are how we do business.',
   points: ['Verified & experienced drivers', 'Clean, well-maintained cars', '24x7 personal support'],
 };

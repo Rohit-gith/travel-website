@@ -67,7 +67,7 @@ export default function OwnerCard() {
                 href={`tel:${CONTACT_INFO.phone.replace(/\s/g, '')}`}
                 className="inline-flex items-center gap-2 rounded-xl bg-white/10 px-6 py-3.5 font-semibold text-white ring-1 ring-white/30 transition hover:bg-white/20"
               >
-                <Phone className="h-4 w-4" /> {CONTACT_INFO.phone}
+                <Phone className="h-4 w-4" /> <span translate="no" className="notranslate">{CONTACT_INFO.phone}</span>
               </a>
             </div>
           </div>

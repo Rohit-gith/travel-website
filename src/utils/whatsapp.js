@@ -47,5 +47,18 @@ export const tourBookingMessage = (booking) =>
     `Email: ${booking.email}`,
   ].join('\n');
 
+// Message sent when someone taps "Book now" on a tour card.
+export const tourEnquiryMessage = (tour) =>
+  [
+    '*New Tour Enquiry*',
+    '',
+    `Tour: ${tour.title}`,
+    `Location: ${tour.location}`,
+    `Duration: ${tour.duration} days`,
+    `Starting price: ${formatPrice(tour.price)} per person`,
+    '',
+    'Please share availability and the best price. Travel date / number of travellers:',
+  ].join('\n');
+
 export const contactMessage = ({ name, email, message }) =>
   [`*Website enquiry*`, '', `Name: ${name}`, `Email: ${email}`, '', message].join('\n');

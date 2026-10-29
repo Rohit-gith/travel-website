@@ -1,18 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ChevronDown, Heart, Menu, Plane, X } from 'lucide-react';
+import { ChevronDown, Compass, Globe, Heart, Landmark, Menu, Mountain, Plane, Tent, TreePine, Waves, X } from 'lucide-react';
 import Container from '@/components/common/Container';
+import LanguageToggle from '@/components/common/LanguageToggle';
 import ServiceIcon from '@/components/common/ServiceIcon';
 import { APP_NAME, APP_TAGLINE, LOGO_SRC, NAV_LINKS } from '@/constants';
 import { servicesData } from '@/data/services';
-import { useAppSelector } from '@/app/hooks';
+import { categories } from '@/data/tours';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { resetFilters, selectAllTours, setCategory } from '@/features/tours/toursSlice';
 import { selectWishlistIds } from '@/features/wishlist/wishlistSlice';
 
-const linkClass = ({ isActive }) =>
-  `text-sm font-medium transition hover:text-brand-600 ${isActive ? 'text-brand-600' : 'text-slate-700'}`;
+// light = navbar transparent hai (hero photo ke upar), isliye text white dikhana hai
+const linkClass =
+  (light) =>
+  ({ isActive }) =>
+    `text-sm font-medium transition ${
+      light
+        ? `hover:text-amber-300 ${isActive ? 'text-amber-300' : 'text-white'}`
+        : `hover:text-brand-600 ${isActive ? 'text-brand-600' : 'text-slate-700'}`
+    }`;
 
 // Custom logo + do-line wordmark. Image load na ho to purana Plane icon fallback me dikhega
-function Logo() {
+function Logo({ light }) {
   const [failed, setFailed] = useState(false);
 
   return (
@@ -26,16 +36,27 @@ function Logo() {
           src={LOGO_SRC}
           alt={`${APP_NAME} logo`}
           onError={() => setFailed(true)}
-          className="h-14 w-14 rounded-xl object-cover shadow-md ring-1 ring-slate-900/10 transition group-hover:shadow-lg"
+          className={`h-14 w-14 rounded-xl object-cover shadow-md ring-1 transition group-hover:shadow-lg ${
+            light ? 'ring-white/30' : 'ring-slate-900/10'
+          }`}
         />
       )}
 
       <span className="flex flex-col leading-none">
-        <span className="font-display text-[1.35rem] font-bold tracking-tight text-slate-900 sm:text-2xl">
-          {APP_NAME}
+        <span
+          className={`font-display text-[1.35rem] font-bold tracking-tight transition-colors sm:text-2xl ${
+            light ? 'text-white' : 'text-slate-900'
+          }`}
+          style={light ? { textShadow: '0 2px 10px rgba(0,0,0,0.45)' } : undefined}
+        >
+          <span translate="no" className="notranslate">{APP_NAME}</span>
         </span>
         {APP_TAGLINE && (
-          <span className="mt-1.5 hidden text-[10px] font-semibold uppercase tracking-[0.28em] text-amber-600 sm:block">
+          <span
+            className={`mt-1.5 text-[9px] font-semibold uppercase tracking-[0.18em] transition-colors sm:text-[10px] sm:tracking-[0.28em] ${
+              light ? 'text-amber-300' : 'text-amber-600'
+            }`}
+          >
             {APP_TAGLINE}
           </span>
         )}
@@ -44,19 +65,102 @@ function Logo() {
   );
 }
 
-// "Services" with a hover / keyboard-focus dropdown listing every service
-function ServicesMenu({ link }) {
+// Tours dropdown me har category ka icon aur chhoti line
+const CATEGORY_META = {
+  Beach: { Icon: Waves, note: 'Sun, sand & sea' },
+  Mountain: { Icon: Mountain, note: 'Hills, snow & fresh air' },
+  Nature: { Icon: TreePine, note: 'Forests, lakes & wildlife' },
+  Heritage: { Icon: Landmark, note: 'Forts, temples & culture' },
+  Adventure: { Icon: Tent, note: 'Treks, camping & thrills' },
+  International: { Icon: Globe, note: 'Trips beyond India' },
+};
+
+// Category chuna to filter set karke /tours khulta hai. 'All' = saare tours
+function useTourPicker() {
+  const dispatch = useAppDispatch();
+  const tours = useAppSelector(selectAllTours);
+
+  const countFor = (cat) => (cat === 'All' ? tours.length : tours.filter((t) => t.category === cat).length);
+  const pick = (cat) => {
+    dispatch(resetFilters());
+    if (cat !== 'All') dispatch(setCategory(cat));
+  };
+
+  return { countFor, pick };
+}
+
+// "Tours" with a hover / keyboard-focus dropdown listing every tour category
+function ToursMenu({ link, light }) {
   const { pathname } = useLocation();
-  const active = pathname.startsWith('/services');
+  const { countFor, pick } = useTourPicker();
+  const active = pathname.startsWith('/tours');
+  const color = light
+    ? `hover:text-amber-300 ${active ? 'text-amber-300' : 'text-white'}`
+    : `hover:text-brand-600 ${active ? 'text-brand-600' : 'text-slate-700'}`;
 
   return (
     <div className="group relative">
-      <NavLink
-        to={link.to}
-        className={`flex items-center gap-1 text-sm font-medium transition hover:text-brand-600 ${
-          active ? 'text-brand-600' : 'text-slate-700'
-        }`}
-      >
+      <NavLink to={link.to} className={`flex items-center gap-1 text-sm font-medium transition ${color}`}>
+        {link.label}
+        <ChevronDown className="h-4 w-4 transition group-hover:rotate-180 group-focus-within:rotate-180" />
+      </NavLink>
+
+      <div className="invisible absolute left-1/2 top-full z-50 w-80 -translate-x-1/2 pt-4 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+        <div className="overflow-hidden rounded-2xl bg-white p-2 shadow-2xl ring-1 ring-slate-200">
+          {categories
+            .filter((c) => c !== 'All')
+            .map((cat) => {
+              const { Icon, note } = CATEGORY_META[cat] || { Icon: Compass, note: '' };
+              return (
+                <Link
+                  key={cat}
+                  to="/tours"
+                  onClick={(e) => {
+                    pick(cat);
+                    e.currentTarget.blur();
+                  }}
+                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-brand-50"
+                >
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                    <Icon className="h-5 w-5" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold text-slate-900">{cat}</span>
+                    <span className="block text-xs text-slate-500">{note}</span>
+                  </span>
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
+                    {countFor(cat)}
+                  </span>
+                </Link>
+              );
+            })}
+          <Link
+            to="/tours"
+            onClick={(e) => {
+              pick('All');
+              e.currentTarget.blur();
+            }}
+            className="mt-1 block rounded-xl bg-slate-50 px-3 py-2.5 text-center text-sm font-semibold text-brand-700 hover:bg-brand-50"
+          >
+            View all tours ({countFor('All')})
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// "Services" with a hover / keyboard-focus dropdown listing every service
+function ServicesMenu({ link, light }) {
+  const { pathname } = useLocation();
+  const active = pathname.startsWith('/services');
+  const color = light
+    ? `hover:text-amber-300 ${active ? 'text-amber-300' : 'text-white'}`
+    : `hover:text-brand-600 ${active ? 'text-brand-600' : 'text-slate-700'}`;
+
+  return (
+    <div className="group relative">
+      <NavLink to={link.to} className={`flex items-center gap-1 text-sm font-medium transition ${color}`}>
         {link.label}
         <ChevronDown className="h-4 w-4 transition group-hover:rotate-180 group-focus-within:rotate-180" />
       </NavLink>
@@ -68,6 +172,7 @@ function ServicesMenu({ link }) {
             <Link
               key={s.id}
               to={`/services#${s.id}`}
+              onClick={(e) => e.currentTarget.blur()}
               className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-brand-50"
             >
               <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
@@ -93,30 +198,64 @@ function ServicesMenu({ link }) {
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const { pathname } = useLocation();
   const wishlistCount = useAppSelector(selectWishlistIds).length;
+  const { countFor, pick } = useTourPicker();
+
+  const isHome = pathname === '/';
+
+  // Scroll karte hi navbar solid ho jaye
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Sirf Home page par (jahan hero photo hai) navbar transparent rahega.
+  // Baaki pages par hamesha solid. Mobile menu khula ho to bhi solid.
+  const transparent = isHome && !scrolled && !open;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <Container className="flex h-20 items-center justify-between">
-        <Logo />
+    <header
+      className={`sticky top-0 z-40 border-b transition-colors duration-300 ${isHome ? '-mb-20' : ''} ${
+        transparent ? 'border-transparent bg-transparent' : 'border-slate-200 bg-white shadow-sm'
+      }`}
+    >
+      {/* Transparent state me halka dark gradient, taaki bright photo par bhi text padhne me aaye */}
+      <div
+        aria-hidden="true"
+        className={`pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-950/55 to-transparent transition-opacity duration-300 ${
+          transparent ? 'opacity-100' : 'opacity-0'
+        }`}
+      />
+
+      <Container className="relative flex h-20 items-center justify-between">
+        <Logo light={transparent} />
 
         {/* Desktop navigation */}
         <nav className="hidden items-center gap-8 md:flex">
           {NAV_LINKS.map((l) =>
             l.to === '/services' ? (
-              <ServicesMenu key={l.to} link={l} />
+              <ServicesMenu key={l.to} link={l} light={transparent} />
+            ) : l.to === '/tours' ? (
+              <ToursMenu key={l.to} link={l} light={transparent} />
             ) : (
-              <NavLink key={l.to} to={l.to} className={linkClass} end={l.to === '/'}>
+              <NavLink key={l.to} to={l.to} className={linkClass(transparent)} end={l.to === '/'}>
                 {l.label}
               </NavLink>
             )
           )}
-          <NavLink to="/bookings" className={linkClass}>
+          <NavLink to="/bookings" className={linkClass(transparent)}>
             My Bookings
           </NavLink>
+          <LanguageToggle light={transparent} />
           <Link
             to="/wishlist"
-            className="relative rounded-full p-2 text-slate-700 hover:bg-slate-100"
+            className={`relative rounded-full p-2 transition ${
+              transparent ? 'text-white hover:bg-white/15' : 'text-slate-700 hover:bg-slate-100'
+            }`}
             aria-label="Wishlist"
           >
             <Heart className="h-5 w-5" />
@@ -128,20 +267,28 @@ export default function Navbar() {
           </Link>
         </nav>
 
-        {/* Mobile toggle */}
-        <button
-          className="rounded-lg p-2 text-slate-700 hover:bg-slate-100 md:hidden"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Toggle menu"
-        >
-          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
+        {/* Mobile: language icon + menu button */}
+        <div className="flex items-center gap-1 md:hidden">
+          <LanguageToggle light={transparent} iconOnly />
+          <button
+            className={`rounded-lg p-2 transition ${
+              transparent ? 'text-white hover:bg-white/15' : 'text-slate-700 hover:bg-slate-100'
+            }`}
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Toggle menu"
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </div>
       </Container>
 
       {/* Mobile menu */}
       {open && (
-        <nav className="max-h-[80vh] overflow-y-auto border-t border-slate-200 bg-white md:hidden">
+        <nav className="relative max-h-[80vh] overflow-y-auto border-t border-slate-200 bg-white md:hidden">
           <Container className="flex flex-col gap-1 py-3">
+            <div className="mb-1">
+              <LanguageToggle full />
+            </div>
             {[...NAV_LINKS, { label: 'My Bookings', to: '/bookings' }, { label: `Wishlist (${wishlistCount})`, to: '/wishlist' }].map(
               (l) => (
                 <div key={l.to}>
@@ -155,6 +302,29 @@ export default function Navbar() {
                   >
                     {l.label}
                   </NavLink>
+                  {l.to === '/tours' && (
+                    <div className="mb-1 ml-4 border-l-2 border-brand-100 pl-3">
+                      {categories
+                        .filter((c) => c !== 'All')
+                        .map((cat) => {
+                          const { Icon } = CATEGORY_META[cat] || { Icon: Compass };
+                          return (
+                            <Link
+                              key={cat}
+                              to="/tours"
+                              onClick={() => {
+                                pick(cat);
+                                setOpen(false);
+                              }}
+                              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
+                            >
+                              <Icon className="h-4 w-4 text-brand-600" /> {cat}
+                              <span className="ml-auto text-xs text-slate-400">{countFor(cat)}</span>
+                            </Link>
+                          );
+                        })}
+                    </div>
+                  )}
                   {l.to === '/services' && (
                     <div className="mb-1 ml-4 border-l-2 border-brand-100 pl-3">
                       {servicesData.map((s) => (

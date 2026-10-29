@@ -20,7 +20,7 @@ import WhatsAppIcon from '@/components/common/WhatsAppIcon';
 import { categories } from '@/data/tours';
 import { CONTACT_INFO, HERO_IMAGES } from '@/constants';
 import { formatCarRate } from '@/utils/format';
-import { carMessage, GENERAL_MESSAGE, waLink } from '@/utils/whatsapp';
+import { carMessage, waLink } from '@/utils/whatsapp';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { selectAllCars } from '@/features/fleet/fleetSlice';
 import { setCategory, setMaxPrice, setSearch } from '@/features/tours/toursSlice';
@@ -119,7 +119,7 @@ export default function Hero() {
   return (
     <section className="relative">
       {/* ================= Full-bleed photo hero ================= */}
-      <div className="relative isolate flex min-h-[520px] items-center overflow-hidden pb-24 pt-12 md:min-h-[680px] md:pt-16 lg:min-h-[740px] lg:pb-32 lg:pt-20">
+      <div className="relative isolate flex min-h-[520px] items-center overflow-hidden pb-24 pt-32 md:min-h-[680px] md:pt-36 lg:min-h-[740px] lg:pb-32 lg:pt-40">
         {/* Background photos: naya photo right se slide hoke aata hai, purana left me chala jata hai.
             Koi zoom ya fade nahi, bas smooth swipe */}
         {bgSlides.map((h, i) => {
@@ -183,26 +183,11 @@ export default function Hero() {
                 Explore tours <ArrowRight className="h-4 w-4" />
               </Link>
 
-              {/* Blinking WhatsApp CTA */}
-              <a
-                href={waLink(GENERAL_MESSAGE)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="animate-wa-glow relative inline-flex items-center gap-2.5 rounded-xl bg-[#25D366] px-6 py-3.5 font-semibold text-white shadow-lg transition hover:bg-[#128C7E] focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
-              >
-                <WhatsAppIcon className="h-5 w-5" />
-                Chat on WhatsApp
-                <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4">
-                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-400 opacity-75" />
-                  <span className="relative inline-flex h-4 w-4 rounded-full border-2 border-white bg-red-500" />
-                </span>
-              </a>
-
               <a
                 href={`tel:${CONTACT_INFO.phone.replace(/\s/g, '')}`}
                 className="inline-flex items-center gap-2 rounded-xl bg-slate-950/65 px-6 py-3.5 font-semibold text-white ring-1 ring-white/35 transition hover:bg-white/20"
               >
-                <Phone className="h-4 w-4" /> {CONTACT_INFO.phone}
+                <Phone className="h-4 w-4" /> <span translate="no" className="notranslate">{CONTACT_INFO.phone}</span>
               </a>
             </div>
 
@@ -234,61 +219,9 @@ export default function Hero() {
             </div>
           </div>
 
-          {/* Search bar */}
-          <form
-            onSubmit={handleSubmit}
-            className="mt-10 grid max-w-4xl gap-2 rounded-2xl bg-white p-2 shadow-2xl md:grid-cols-[1fr_1fr_1fr_auto] md:items-center"
-          >
-            <Field icon={MapPin} label="Destination">
-              <input
-                type="text"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Where to?"
-                className="w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
-              />
-            </Field>
-
-            <Field icon={Compass} label="Trip type">
-              <select
-                value={category}
-                onChange={(e) => setCategoryValue(e.target.value)}
-                className="w-full bg-transparent text-sm font-medium text-slate-900 outline-none"
-              >
-                {categories.map((c) => (
-                  <option key={c} value={c}>
-                    {c === 'All' ? 'Any type' : c}
-                  </option>
-                ))}
-              </select>
-            </Field>
-
-            <Field icon={Wallet} label="Budget">
-              <select
-                value={budget}
-                onChange={(e) => setBudget(Number(e.target.value))}
-                className="w-full bg-transparent text-sm font-medium text-slate-900 outline-none"
-              >
-                {budgets.map((b) => (
-                  <option key={b.value} value={b.value}>
-                    {b.label}
-                  </option>
-                ))}
-              </select>
-            </Field>
-
-            <button
-              type="submit"
-              className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-8 py-4 font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
-            >
-              <Search className="h-5 w-5" />
-              Search
-            </button>
-          </form>
-
-          {/* Car card: sits under the search bar on small screens, floats on the right on large screens */}
+          {/* Car card: mobile/tablet par 'Choose your ride' ke seedha neeche, bade screen par right side me floating */}
           <div
-            className="mt-8 hidden w-full max-w-sm overflow-hidden rounded-2xl md:block bg-slate-950/65 text-white shadow-xl ring-1 ring-white/25 xl:absolute xl:right-0 xl:top-0 xl:mt-0 xl:w-80"
+            className="mt-6 w-full max-w-sm overflow-hidden rounded-2xl bg-slate-950/65 text-white shadow-xl ring-1 ring-white/25 xl:absolute xl:right-0 xl:top-0 xl:mt-0 xl:w-80"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             onFocus={() => setPaused(true)}
@@ -361,6 +294,59 @@ export default function Hero() {
               </a>
             </div>
           </div>
+
+          {/* Search bar */}
+          <form
+            onSubmit={handleSubmit}
+            className="mt-10 grid max-w-4xl gap-2 rounded-2xl bg-white p-2 shadow-2xl md:grid-cols-[1fr_1fr_1fr_auto] md:items-center"
+          >
+            <Field icon={MapPin} label="Destination">
+              <input
+                type="text"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Where to?"
+                className="w-full bg-transparent text-sm font-medium text-slate-900 outline-none placeholder:text-slate-400"
+              />
+            </Field>
+
+            <Field icon={Compass} label="Trip type">
+              <select
+                value={category}
+                onChange={(e) => setCategoryValue(e.target.value)}
+                className="w-full bg-transparent text-sm font-medium text-slate-900 outline-none"
+              >
+                {categories.map((c) => (
+                  <option key={c} value={c}>
+                    {c === 'All' ? 'Any type' : c}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <Field icon={Wallet} label="Budget">
+              <select
+                value={budget}
+                onChange={(e) => setBudget(Number(e.target.value))}
+                className="w-full bg-transparent text-sm font-medium text-slate-900 outline-none"
+              >
+                {budgets.map((b) => (
+                  <option key={b.value} value={b.value}>
+                    {b.label}
+                  </option>
+                ))}
+              </select>
+            </Field>
+
+            <button
+              type="submit"
+              className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-8 py-4 font-semibold text-white transition hover:bg-brand-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2"
+            >
+              <Search className="h-5 w-5" />
+              Search
+            </button>
+          </form>
+
         </Container>
       </div>
 

@@ -25,7 +25,7 @@ function FooterLogo() {
         />
       )}
       <span className="flex flex-col leading-none">
-        <span className="font-display text-2xl font-bold tracking-tight text-white">{APP_NAME}</span>
+        <span className="font-display text-2xl font-bold tracking-tight text-white"><span translate="no" className="notranslate">{APP_NAME}</span></span>
         {APP_TAGLINE && (
           <span className="mt-1.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#fbbf24]">
             {APP_TAGLINE}
@@ -78,7 +78,7 @@ export default function Footer() {
             </li>
             <li>
               <a href={phoneHref} className="flex items-center gap-2 transition hover:text-white">
-                <Phone className="h-4 w-4 shrink-0" /> {CONTACT_INFO.phone}
+                <Phone className="h-4 w-4 shrink-0" /> <span translate="no" className="notranslate">{CONTACT_INFO.phone}</span>
               </a>
             </li>
             <li>
@@ -93,7 +93,7 @@ export default function Footer() {
             </li>
             <li>
               <a href={`mailto:${CONTACT_INFO.email}`} className="flex items-center gap-2 break-all transition hover:text-white">
-                <Mail className="h-4 w-4 shrink-0" /> {CONTACT_INFO.email}
+                <Mail className="h-4 w-4 shrink-0" /> <span translate="no" className="notranslate">{CONTACT_INFO.email}</span>
               </a>
             </li>
           </ul>
@@ -102,7 +102,7 @@ export default function Footer() {
       <div className="border-t border-slate-800 py-5 text-xs text-slate-500">
         <Container className="flex flex-col items-center gap-2 text-center">
           <p>
-            &copy; {new Date().getFullYear()} {APP_NAME}. All rights reserved.
+            &copy; {new Date().getFullYear()} <span translate="no" className="notranslate">{APP_NAME}</span>. All rights reserved.
           </p>
           <p>
             Designed &amp; developed by{' '}

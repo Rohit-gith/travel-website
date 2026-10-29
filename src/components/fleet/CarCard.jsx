@@ -1,10 +1,13 @@
-import { Fuel, Luggage, Snowflake, Users } from 'lucide-react';
+import { useState } from 'react';
+import { Fuel, Luggage, Snowflake, Users, ZoomIn } from 'lucide-react';
 import CarImage from './CarImage';
+import CarLightbox from './CarLightbox';
 import WhatsAppIcon from '@/components/common/WhatsAppIcon';
 import { carMessage, waLink } from '@/utils/whatsapp';
 import { formatCarRate } from '@/utils/format';
 
 export default function CarCard({ car }) {
+  const [viewing, setViewing] = useState(false);
   const specs = [
     { Icon: Users, label: `${car.seats} seats` },
     { Icon: Luggage, label: `${car.bags} bags` },
@@ -15,7 +18,18 @@ export default function CarCard({ car }) {
   return (
     <article className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-slate-100 transition hover:-translate-y-1">
       <div className="relative aspect-[4/3] overflow-hidden">
-        <CarImage car={car} className="h-full w-full transition duration-500 group-hover:scale-105" />
+        {/* Photo par click karne se badi photo khulti hai */}
+        <button
+          type="button"
+          onClick={() => setViewing(true)}
+          aria-label={`View ${car.name} photo`}
+          className="block h-full w-full cursor-zoom-in"
+        >
+          <CarImage car={car} className="h-full w-full transition duration-500 group-hover:scale-105" />
+        </button>
+        <span className="pointer-events-none absolute bottom-3 right-3 flex items-center gap-1 rounded-full bg-slate-900/70 px-2.5 py-1 text-xs font-medium text-white opacity-90 sm:opacity-0 sm:transition sm:group-hover:opacity-100">
+          <ZoomIn className="h-3.5 w-3.5" /> View photo
+        </span>
         <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold text-brand-700">
           {car.segment}
         </span>
@@ -48,6 +62,8 @@ export default function CarCard({ car }) {
           </a>
         </div>
       </div>
+
+      {viewing && <CarLightbox car={car} onClose={() => setViewing(false)} />}
     </article>
   );
 }

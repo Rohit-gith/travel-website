@@ -46,7 +46,7 @@ function CarSilhouette({ type = 'Sedan', label }) {
 }
 
 // Shows the car photo; falls back to a vector car if the file is missing.
-export default function CarImage({ car, className = '', eager = false }) {
+export default function CarImage({ car, className = '', eager = false, fit = 'cover' }) {
   const [failedSrc, setFailedSrc] = useState(null);
 
   if (!car.image || failedSrc === car.image) {
@@ -63,7 +63,7 @@ export default function CarImage({ car, className = '', eager = false }) {
       alt={car.name}
       loading={eager ? 'eager' : 'lazy'}
       onError={() => setFailedSrc(car.image)}
-      className={`object-cover ${className}`}
+      className={`${fit === 'contain' ? 'object-contain' : 'object-cover'} ${className}`}
     />
   );
 }
