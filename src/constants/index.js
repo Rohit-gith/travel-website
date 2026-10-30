@@ -38,7 +38,7 @@ export const NAV_LINKS = [
 ];
 
 export const CONTACT_INFO = {
-  email: 'xyz@gmail.com',
+  email: 'sovanshitravels@gmail.com',
   phone: '+91 8260127233',
   address: 'Park Street, Kolkata, West Bengal, India',
 };
