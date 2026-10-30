@@ -1,14 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { ChevronDown, Compass, Globe, Heart, Landmark, Menu, Mountain, Plane, Tent, TreePine, Waves, X } from 'lucide-react';
+import { ChevronDown, Heart, Menu, Plane, X } from 'lucide-react';
 import Container from '@/components/common/Container';
 import LanguageToggle from '@/components/common/LanguageToggle';
 import ServiceIcon from '@/components/common/ServiceIcon';
 import { APP_NAME, APP_TAGLINE, LOGO_SRC, NAV_LINKS } from '@/constants';
 import { servicesData } from '@/data/services';
-import { categories } from '@/data/tours';
-import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { resetFilters, selectAllTours, setCategory } from '@/features/tours/toursSlice';
+import { useAppSelector } from '@/app/hooks';
 import { selectWishlistIds } from '@/features/wishlist/wishlistSlice';
 
 // light = navbar transparent hai (hero photo ke upar), isliye text white dikhana hai
@@ -65,91 +63,6 @@ function Logo({ light }) {
   );
 }
 
-// Tours dropdown me har category ka icon aur chhoti line
-const CATEGORY_META = {
-  Beach: { Icon: Waves, note: 'Sun, sand & sea' },
-  Mountain: { Icon: Mountain, note: 'Hills, snow & fresh air' },
-  Nature: { Icon: TreePine, note: 'Forests, lakes & wildlife' },
-  Heritage: { Icon: Landmark, note: 'Forts, temples & culture' },
-  Adventure: { Icon: Tent, note: 'Treks, camping & thrills' },
-  International: { Icon: Globe, note: 'Trips beyond India' },
-};
-
-// Category chuna to filter set karke /tours khulta hai. 'All' = saare tours
-function useTourPicker() {
-  const dispatch = useAppDispatch();
-  const tours = useAppSelector(selectAllTours);
-
-  const countFor = (cat) => (cat === 'All' ? tours.length : tours.filter((t) => t.category === cat).length);
-  const pick = (cat) => {
-    dispatch(resetFilters());
-    if (cat !== 'All') dispatch(setCategory(cat));
-  };
-
-  return { countFor, pick };
-}
-
-// "Tours" with a hover / keyboard-focus dropdown listing every tour category
-function ToursMenu({ link, light }) {
-  const { pathname } = useLocation();
-  const { countFor, pick } = useTourPicker();
-  const active = pathname.startsWith('/tours');
-  const color = light
-    ? `hover:text-amber-300 ${active ? 'text-amber-300' : 'text-white'}`
-    : `hover:text-brand-600 ${active ? 'text-brand-600' : 'text-slate-700'}`;
-
-  return (
-    <div className="group relative">
-      <NavLink to={link.to} className={`flex items-center gap-1 text-sm font-medium transition ${color}`}>
-        {link.label}
-        <ChevronDown className="h-4 w-4 transition group-hover:rotate-180 group-focus-within:rotate-180" />
-      </NavLink>
-
-      <div className="invisible absolute left-1/2 top-full z-50 w-80 -translate-x-1/2 pt-4 opacity-0 transition duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-        <div className="overflow-hidden rounded-2xl bg-white p-2 shadow-2xl ring-1 ring-slate-200">
-          {categories
-            .filter((c) => c !== 'All')
-            .map((cat) => {
-              const { Icon, note } = CATEGORY_META[cat] || { Icon: Compass, note: '' };
-              return (
-                <Link
-                  key={cat}
-                  to="/tours"
-                  onClick={(e) => {
-                    pick(cat);
-                    e.currentTarget.blur();
-                  }}
-                  className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-brand-50"
-                >
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-sm font-semibold text-slate-900">{cat}</span>
-                    <span className="block text-xs text-slate-500">{note}</span>
-                  </span>
-                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-semibold text-slate-600">
-                    {countFor(cat)}
-                  </span>
-                </Link>
-              );
-            })}
-          <Link
-            to="/tours"
-            onClick={(e) => {
-              pick('All');
-              e.currentTarget.blur();
-            }}
-            className="mt-1 block rounded-xl bg-slate-50 px-3 py-2.5 text-center text-sm font-semibold text-brand-700 hover:bg-brand-50"
-          >
-            View all tours ({countFor('All')})
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // "Services" with a hover / keyboard-focus dropdown listing every service
 function ServicesMenu({ link, light }) {
   const { pathname } = useLocation();
@@ -201,7 +114,6 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const { pathname } = useLocation();
   const wishlistCount = useAppSelector(selectWishlistIds).length;
-  const { countFor, pick } = useTourPicker();
 
   const isHome = pathname === '/';
 
@@ -239,8 +151,6 @@ export default function Navbar() {
           {NAV_LINKS.map((l) =>
             l.to === '/services' ? (
               <ServicesMenu key={l.to} link={l} light={transparent} />
-            ) : l.to === '/tours' ? (
-              <ToursMenu key={l.to} link={l} light={transparent} />
             ) : (
               <NavLink key={l.to} to={l.to} className={linkClass(transparent)} end={l.to === '/'}>
                 {l.label}
@@ -302,29 +212,6 @@ export default function Navbar() {
                   >
                     {l.label}
                   </NavLink>
-                  {l.to === '/tours' && (
-                    <div className="mb-1 ml-4 border-l-2 border-brand-100 pl-3">
-                      {categories
-                        .filter((c) => c !== 'All')
-                        .map((cat) => {
-                          const { Icon } = CATEGORY_META[cat] || { Icon: Compass };
-                          return (
-                            <Link
-                              key={cat}
-                              to="/tours"
-                              onClick={() => {
-                                pick(cat);
-                                setOpen(false);
-                              }}
-                              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-slate-600 hover:bg-slate-50"
-                            >
-                              <Icon className="h-4 w-4 text-brand-600" /> {cat}
-                              <span className="ml-auto text-xs text-slate-400">{countFor(cat)}</span>
-                            </Link>
-                          );
-                        })}
-                    </div>
-                  )}
                   {l.to === '/services' && (
                     <div className="mb-1 ml-4 border-l-2 border-brand-100 pl-3">
                       {servicesData.map((s) => (
